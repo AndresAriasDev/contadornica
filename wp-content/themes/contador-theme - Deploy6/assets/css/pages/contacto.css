@@ -1,0 +1,30 @@
+/* Contacto: variante visual aislada; no modifica el formulario de los servicios. */
+.contact-page { padding-top: 8.5rem; background: var(--color-background-soft); overflow-wrap: anywhere; }
+.contact-page__header { text-align: center; padding-bottom: 2.5rem; }
+.contact-page__header h1 { max-width: 28ch; margin: 0 auto 1rem; color: var(--color-secondary); font-size: clamp(2rem, 3.6vw, 3rem); line-height: 1.15; text-wrap: balance; }
+.contact-page__header p { max-width: 72ch; margin: 0 auto; color: var(--color-text-muted); }
+.contact-page__main { padding-bottom: var(--section-spacing); }
+.contact-page__card { display: grid; grid-template-columns: minmax(0, .45fr) minmax(0, .55fr); gap: clamp(1.5rem, 3vw, 2.5rem); padding: clamp(1.25rem, 3vw, 2rem); background: var(--color-background); border-radius: calc(var(--radius) * 2); box-shadow: var(--shadow-soft); }
+.contact-page__location { display: flex; flex-direction: column; min-width: 0; gap: .75rem; }
+.contact-page__location iframe { display: block; width: 100%; height: 100%; min-height: 480px; flex: 1; border: 0; border-radius: var(--radius); }
+.contact-page__location > a { display: inline-flex; align-items: center; align-self: flex-start; min-height: 44px; font-size: var(--font-size-small); }
+.contact-page .advisory-section--embedded { min-width: 0; padding: 0; background: transparent; }
+.contact-page .advisory-section__content { padding: 0; }
+.contact-page .advisory-section__intro { margin-bottom: 1.5rem; }
+.contact-page .advisory-section__intro h2 { font-size: clamp(1.5rem, 2.4vw, 2rem); line-height: 1.2; }
+.contact-page .advisory-form__actions .btn { width: auto; }
+.contact-page__sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@media (max-width: 1100px) {
+	.contact-page__card { grid-template-columns: minmax(0, .38fr) minmax(0, .62fr); }
+}
+@media (max-width: 900px) {
+	.contact-page { padding-top: 7.5rem; }
+	.contact-page__card { grid-template-columns: minmax(0, 1fr); }
+	.contact-page__location iframe { flex: none; height: 320px; min-height: 0; }
+}
+@media (max-width: 760px) {
+	.contact-page__header { padding-bottom: 1.75rem; }
+	.contact-page__card { padding: 1rem; gap: 1.5rem; }
+	.contact-page__location iframe { height: 260px; }
+	.contact-page .advisory-form__actions .btn { width: 100%; }
+}

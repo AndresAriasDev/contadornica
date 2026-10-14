@@ -1,0 +1,21 @@
+
+# Dependencias
+node_modules/
+
+# Configuración local y credenciales
+.vscode/
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Archivos temporales
+.DS_Store
+Thumbs.db
+*.log
+
+# Cachés
+.cache/
+.vite/
+coverage/
