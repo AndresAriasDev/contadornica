@@ -86,6 +86,7 @@ $footer_legal = array(
 		</div>
 	</div>
 </footer>
+<?php get_template_part( 'template-parts/components/whatsapp-button' ); ?>
 <?php wp_footer(); ?>
 </body>
 </html>

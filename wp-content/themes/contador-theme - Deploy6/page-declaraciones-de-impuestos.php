@@ -6,6 +6,10 @@
  * @package Contador_Theme
  */
 defined( 'ABSPATH' ) || exit;
+add_filter( 'body_class', static function ( $classes ) {
+	$classes[] = 'accounting-services-page';
+	return $classes;
+} );
 
 get_template_part( 'template-parts/components/service-page', null, array(
 	'title' => 'Declaraciones de impuestos en Nicaragua',

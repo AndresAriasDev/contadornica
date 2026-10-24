@@ -1,0 +1,7 @@
+.site-feedback-dialog { width: min(28rem, calc(100% - 2rem)); max-height: calc(100svh - 2rem); overflow-y: auto; padding: clamp(1.5rem, 4vw, 2.5rem); border: 0; border-radius: calc(var(--radius) * 2); background: var(--color-background); color: var(--color-text); box-shadow: var(--shadow-soft); text-align: center; }
+.site-feedback-dialog::backdrop { background: rgb(0 0 0 / 60%); }
+.site-feedback-dialog__icon { display: grid; place-items: center; width: 3.5rem; height: 3.5rem; margin: 0 auto 1.25rem; border-radius: 50%; background: #e9f7ee; color: #237a46; font-size: 1.5rem; }
+.site-feedback-dialog h2 { color: var(--color-secondary); font-size: var(--font-size-h3); }
+.site-feedback-dialog p { margin-bottom: 1.5rem; }
+.site-feedback-dialog .btn { min-width: 8rem; }
+.site-feedback-dialog[data-type="error"] .site-feedback-dialog__icon { background: #fceeed; color: #b42318; }

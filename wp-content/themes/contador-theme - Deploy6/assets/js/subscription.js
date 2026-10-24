@@ -9,10 +9,19 @@
 			const response = await fetch(endpoint, { method: 'POST', credentials: 'omit', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data), signal: controller.signal });
 			if (response.status === 404 || response.status === 405) throw new Error('No se encontró el endpoint REST de suscripción. Revisa la URL del sitio y la disponibilidad de la REST API.');
 			const result = await response.json().catch(() => { throw new Error('El servidor no devolvió una respuesta REST válida. Revisa la configuración de WordPress y del servidor.'); });
-			if (!response.ok || !result || result.accepted !== true) throw new Error(result?.message || 'La REST API no confirmó la solicitud. Inténtalo más tarde.');
+			if (!response.ok || !result || result.accepted !== true) {
+				const failure = new Error(result?.message || 'La REST API no confirmó la solicitud. Inténtalo más tarde.');
+				failure.code = result?.code;
+				failure.status = response.status;
+				throw failure;
+			}
 			return result;
 		} catch (error) {
-			if (error.name === 'AbortError' || error instanceof TypeError) throw new Error('No pudimos comprobar el resultado. Revisa tu conexión y tu correo antes de volver a intentarlo.');
+			if (error.name === 'AbortError' || error instanceof TypeError) {
+				const failure = new Error('No pudimos comprobar el resultado. Revisa tu conexión y tu correo antes de volver a intentarlo.');
+				failure.code = 'subscription_connection';
+				throw failure;
+			}
 			throw error;
 		} finally { clearTimeout(timer); }
 	};
@@ -22,18 +31,21 @@
 		const error = form.querySelector('[role="alert"]');
 		const spinner = submit.querySelector('.subscription-spinner');
 		const icon = submit.querySelector('.site-footer__icon');
-		const dialog = form.parentElement.querySelector('dialog');
+		const showError = message => window.SiteFeedback.open({ type: 'error', message, returnFocus: email });
 		let busy = false;
 		submit.disabled = false;
-		dialog.querySelector('[data-subscription-close]').addEventListener('click', () => dialog.close());
-		dialog.addEventListener('close', () => submit.focus());
+		email.addEventListener('input', () => email.removeAttribute('aria-invalid'));
 		form.addEventListener('submit', async event => {
 			event.preventDefault();
 			if (busy) return;
 			error.textContent = '';
 			email.value = email.value.trim();
 			email.removeAttribute('aria-invalid');
-			if (!form.reportValidity()) return;
+			if (!email.value || !email.validity.valid) {
+				email.setAttribute('aria-invalid', 'true');
+				showError(!email.value ? 'Ingresa tu correo electrónico para suscribirte' : 'Ingresa un correo electrónico válido');
+				return;
+			}
 			busy = true; submit.disabled = true;
 			form.setAttribute('aria-busy', 'true');
 			submit.setAttribute('aria-label', 'Enviando solicitud');
@@ -41,8 +53,18 @@
 			try {
 				await request(form.dataset.endpoint, { email: email.value, website: form.elements.website.value });
 				form.reset();
-				dialog.showModal(); // Dialog nativo: foco contenido, Escape y fondo inerte.
-			} catch (failure) { error.textContent = failure.message; }
+				window.SiteFeedback.open({ type: 'success', title: '¡Revisa tu correo!', message: 'Te enviamos un enlace para confirmar tu suscripción. Confírmala para comenzar a recibir nuestras nuevas publicaciones.', returnFocus: submit });
+			} catch (failure) {
+				let message = 'No pudimos completar la solicitud. Inténtalo de nuevo más tarde.';
+				if (failure.code === 'subscription_mail_failed') message = 'No pudimos enviar el correo de confirmación. Inténtalo de nuevo en unos minutos.';
+				else if (failure.code === 'subscription_connection') message = 'No pudimos comprobar el resultado. Revisa tu conexión y tu correo antes de volver a intentarlo.';
+				else if (failure.status === 429) message = 'Espera unos minutos antes de volver a intentarlo.';
+				else if (failure.status === 422) {
+					message = 'Ingresa un correo electrónico válido';
+					email.setAttribute('aria-invalid', 'true');
+				}
+				showError(message);
+			}
 			finally {
 				busy = false; submit.disabled = false; spinner.hidden = true; icon.hidden = false;
 				form.removeAttribute('aria-busy'); submit.setAttribute('aria-label', 'Suscribirse');

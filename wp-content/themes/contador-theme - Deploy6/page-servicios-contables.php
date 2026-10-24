@@ -5,6 +5,10 @@
  * @package Contador_Theme
  */
 defined( 'ABSPATH' ) || exit;
+add_filter( 'body_class', static function ( $classes ) {
+	$classes[] = 'accounting-services-page';
+	return $classes;
+} );
 
 $needs = array(
 	array( 'No tienes tiempo para llevar tu contabilidad', 'Concéntrate en administrar y hacer crecer tu negocio mientras recibes apoyo profesional para mantener tu información contable al día.', 'Más tiempo para enfocarte en tu negocio' ),
